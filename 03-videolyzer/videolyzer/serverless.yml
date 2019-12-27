@@ -1,0 +1,17 @@
+
+service: videolyzer
+
+provider:
+  name: aws
+  runtime: python3.8
+  profile: ${file(../config.${self:provider.stage}.yml):profile}
+
+functions:
+  videolyzerFunc:
+    handler: handler.videolyzer_func
+    events:
+      - s3:
+          bucket: ${file(../config.${self:provider.stage}.yml):bucket_name}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .mp4
